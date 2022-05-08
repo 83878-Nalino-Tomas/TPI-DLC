@@ -6,13 +6,13 @@ public class Post{
 
     private int termfrecuency;
     private int docId;
-    private String contexto;
+    private String context;
 
 
-    public Post(int termfrecuency, int docId, String contexto) {
+    public Post(int termfrecuency, int docId, String context) {
         this.termfrecuency = termfrecuency;
         this.docId = docId;
-        this.contexto = contexto;
+        this.context = context;
     }
  
     public void IncrementTF(){
@@ -43,7 +43,7 @@ public class Post{
         StringBuilder sb = new StringBuilder();
         sb.append("Id Del documento: ").append(this.docId);
         sb.append("\t Frecuencia en el documento: ").append(this.termfrecuency);
-        sb.append("\n Contexto de la palabra: ").append(contexto);
+        sb.append("\n Contexto de la palabra: ").append(context);
         return sb.toString();
     }
 
@@ -56,8 +56,8 @@ public class Post{
         return this.docId;
     }
 
-    public String getContexto() {
-        return this.contexto;
+    public String getContext() {
+        return this.context;
     }
 
 
