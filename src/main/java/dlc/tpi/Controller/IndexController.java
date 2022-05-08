@@ -20,8 +20,8 @@ public class IndexController {
         // For tests
         HashMap<String, VocabularyEntry> vocabulary = new HashMap<>();
         HashMap<String, HashMap<Integer, Post>> post = new HashMap<>();
-
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("C:\\Users\\54351\\DocumentosTP1"))) {
+        String pathDocs = System.getProperty("user.home");
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(pathDocs +"\\DocumentosTP1"))) {
             int docId = 0;
             for(Path file: stream) {
                 ++ docId;
@@ -43,7 +43,7 @@ public class IndexController {
         try (BufferedReader buffer = new BufferedReader(new FileReader(doc.getPath()))) {
             while (buffer.ready()) {
                 String newLine = buffer.readLine();
-                StringTokenizer words = new StringTokenizer(newLine, "[.,;- ]");
+                StringTokenizer words = new StringTokenizer(newLine, "[.,; ]");
                 while (words.hasMoreTokens()) {
                     String word = words.nextToken();
                     // To do word cleaning
