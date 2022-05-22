@@ -1,10 +1,6 @@
 package dlc.tpi.Controller;
 
 import java.util.HashMap;
-import java.util.StringTokenizer;
-
-import javax.print.Doc;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,82 +9,73 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import dlc.tpi.DataAccess.DBDocument;
+import dlc.tpi.DataAccess.DBPost;
+import dlc.tpi.DataAccess.DBVocabulary;
 import dlc.tpi.Entity.*;
 
 public class IndexController {
+
     public static void main(String[] args) {
-        // For tests
         HashMap<String, VocabularyEntry> vocabulary = new HashMap<>();
-        HashMap<String, HashMap<Integer, Post>> post = new HashMap<>();
+        HashMap<String, Post> docPost = new HashMap<>();
         String pathDocs = System.getProperty("user.home");
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(pathDocs +"\\DocumentosTP1"))) {
-            int docId = 0;
-            for(Path file: stream) {
-                ++ docId;
-                Document newDoc = new Document(docId, file.getFileName().toString(), file.toString()); 
-                index(newDoc, vocabulary, post);
+        Long init = System.currentTimeMillis();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {
+            for (Path file : stream) {
+                Document newDoc = new Document(file.getFileName().toString());
+                DBDocument.insertDoc(newDoc);
+                indexOneByOne(newDoc, vocabulary, docPost);
             }
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Tamaño del vocabulario: " + vocabulary.size());
-        System.out.println("Don Quixote \n" + vocabulary.get("Quixote"));
-        for (Post p : post.get("Quixote").values()) {
-            System.out.println(p);
-        }
-    }
-
-    public static void index( Document doc, HashMap<String, VocabularyEntry> vocabulary,
-            HashMap<String, HashMap<Integer, Post>> posteo) {
-        try (BufferedReader buffer = new BufferedReader(new FileReader(doc.getPath()))) {
-            while (buffer.ready()) {
-                String newLine = buffer.readLine();
-                StringTokenizer words = new StringTokenizer(newLine, "[.,; ]");
-                while (words.hasMoreTokens()) {
-                    String word = words.nextToken();
-                    // To do word cleaning
-
-                    if (!vocabulary.containsKey(word)) {
-                        VocabularyEntry newEntry = new VocabularyEntry(1, 0);
-                        vocabulary.put(word, newEntry);
-                    }
-
-                    if (!posteo.containsKey(word)) {
-                        vocabulary.get(word).incrementNr();
-                        HashMap<Integer, Post> newWordPost = newHashPost(doc.getDocId(), newLine );
-                        posteo.put(word, newWordPost);
-                    } else {
-                        HashMap<Integer, Post> wordPost = posteo.get(word);
-                        if (wordPost.containsKey(doc.getDocId())) {
-                            wordPost.get(doc.getDocId()).IncrementTF();
-                        } else {
-                            vocabulary.get(word).incrementNr();
-                            Post newPost = new Post(1, doc.getDocId(), newLine );
-                            wordPost.put(doc.getDocId(), newPost);
-                        }
-                    }
-
-                    VocabularyEntry vEntry = vocabulary.get(word);
-                    int docTf = posteo.get(word).get(doc.getDocId()).getTermfrecuency();
-                    if(docTf > vEntry.getMaxTf()) {
-                        vEntry.setMaxTf(docTf);
-                    }
-                }
-
-            }
-            
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+        DBVocabulary.insertVocabulary(vocabulary);
+        System.out.println((System.currentTimeMillis() - init) / 1000 / 60 + " Minutos");
     }
 
-    public static HashMap<Integer, Post> newHashPost(int docId, String context) {
-        Post newPost = new Post(1, docId, context);
-        HashMap<Integer, Post> newWordPost = new HashMap<>();
-        newWordPost.put(docId, newPost);
-        return newWordPost;
+    public static void indexOneByOne(Document doc, HashMap<String, VocabularyEntry> vocabulary,
+            HashMap<String, Post> docPost) {
+        String delim = "[\\.\\n\\s*,;]+";
+        try (BufferedReader buffer = new BufferedReader(new FileReader(doc.getPath()))) {
+            while (buffer.ready()) {
+                String newLine = buffer.readLine().toLowerCase();
+                String[] words = newLine.split(delim);
+                for (int i = 0; i < words.length; i++) {
+                    String word = words[i].replaceAll("[^a-zA-Z0-9]", "");
+                    if (!word.isEmpty()) {
+                        if (!vocabulary.containsKey(word)) {
+                            VocabularyEntry newEntry = new VocabularyEntry(1, 0);
+                            vocabulary.put(word, newEntry);
+                        }
+                        if (!docPost.containsKey(word)) {
+                            vocabulary.get(word).incrementNr();
+                            Post newPost = new Post(1, doc.getDocId(), getContext(newLine));
+                            docPost.put(word, newPost);
+                        } else {
+                            docPost.get(word).IncrementTF();
+                        }
+
+                        VocabularyEntry wordVocabularyEntry = vocabulary.get(word);
+                        int docTf = docPost.get(word).getTermfrecuency();
+                        if (docTf > wordVocabularyEntry.getMaxTf()) {
+                            wordVocabularyEntry.setMaxTf(docTf);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            DBPost.insertPost(docPost);
+            docPost.clear();
+        }
     }
 
-
+    public static String getContext(String line) {
+        if (line.length() > 140) {
+            return line.substring(0, 140);
+        }
+        return line;
+    }
 }
