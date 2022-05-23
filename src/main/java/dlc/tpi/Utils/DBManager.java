@@ -16,6 +16,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+
 public class DBManager implements Serializable {
 
   private static final long serialVersionUID = -5234473242999323611L;
@@ -24,14 +25,16 @@ public class DBManager implements Serializable {
     SINGLE_CONNECTION_MODE, POOL_CONNECTION_MODE
   }
 
-  public static final String MYSQL_DRIVER_NAME = "org.mariadb.jdbc.Driver";
+  public static final String MARIADB_DRIVER_NAME = "org.mariadb.jdbc.Driver";
+  public static final String MYSQL_DRIVER_NAME = "org.mysql.jdbc.Driver";
 
   private DBConnectionMode connectionMode;
 
-  private String driverName = MYSQL_DRIVER_NAME;
-  private String url = "jdbc:mariadb://localhost:3306/dlc?rewriteBatchedStatements=true";
-  private String usr = "root";
-  private String pwd = "dlc2022";
+
+  private String driverName;
+  private String url;
+  private String usr;
+  private String pwd;
 
   private String resourceName;
 
@@ -584,7 +587,7 @@ public class DBManager implements Serializable {
   // util
   public static String joinArray(String separator, Object[] values) {
     if (separator != null && !separator.isEmpty() && values != null) {
-      List<String> list = new ArrayList();
+      List<String> list = new ArrayList<>();
       for (Object value : values) {
         list.add(value.toString());
       }

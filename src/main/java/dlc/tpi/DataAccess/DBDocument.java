@@ -7,10 +7,8 @@ import dlc.tpi.Utils.DBManager;
 
 public class DBDocument {
 
-    public static void insertDoc(Document doc) {
-        DBManager db = new DBManager();
+    public static void insertDoc(Document doc, DBManager db) {
         try {
-            db.connect();
             String SQL_INSERT = "INSERT INTO dlc.document (docName) VALUES (?)";
             db.prepareUpdate(SQL_INSERT);
             db.setString(1, doc.getDocName());
@@ -21,8 +19,6 @@ public class DBDocument {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            db.close();
         }
     }
 

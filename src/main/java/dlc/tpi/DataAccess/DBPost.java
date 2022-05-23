@@ -3,15 +3,14 @@ package dlc.tpi.DataAccess;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 
+
 import dlc.tpi.Entity.Post;
 import dlc.tpi.Utils.DBManager;
 
 public class DBPost {
 
-    public static void insertPost(HashMap<String, Post> post) {
-        DBManager db = new DBManager();
+    public static void insertPost(HashMap<String, Post> post, DBManager db) {
         try {
-            db.connect();
             int i = 0;
 
             String SQL_INSERT = "INSERT INTO dlc.post (word, docId, termFrecuency,ctx) VALUES(?,?,?,?)";
@@ -31,10 +30,7 @@ public class DBPost {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            db.close();
         }
-
     }
 
 }
