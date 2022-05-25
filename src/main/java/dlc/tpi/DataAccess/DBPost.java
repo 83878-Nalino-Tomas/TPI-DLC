@@ -1,10 +1,10 @@
-package dlc.tpi.DataAccess;
+package dlc.tpi.dataAccess;
 
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 
-import dlc.tpi.Entity.Post;
-import dlc.tpi.Utils.DBManager;
+import dlc.tpi.entity.Post;
+import dlc.tpi.util.DBManager;
 
 public class DBPost {
 

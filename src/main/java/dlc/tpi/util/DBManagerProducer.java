@@ -1,10 +1,9 @@
-package dlc.tpi.Utils;
+package dlc.tpi.util;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
-
 
 @ApplicationScoped
 public class DBManagerProducer {
@@ -23,7 +22,7 @@ public class DBManagerProducer {
 
             db.connect();
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
 
         return db;

@@ -1,4 +1,4 @@
-package dlc.tpi.Entity;
+package dlc.tpi.entity;
 
 public class Document {
     private int docId;

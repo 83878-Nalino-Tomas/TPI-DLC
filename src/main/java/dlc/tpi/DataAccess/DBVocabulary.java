@@ -1,12 +1,12 @@
-package dlc.tpi.DataAccess;
+package dlc.tpi.dataAccess;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.util.Hashtable;
 
-import dlc.tpi.Entity.VocabularyEntry;
-import dlc.tpi.Utils.DBManager;
+import dlc.tpi.entity.VocabularyEntry;
+import dlc.tpi.util.DBManager;
 
 public class DBVocabulary {
     public static void insertVocabulary(Hashtable<String, VocabularyEntry> vocabulary, DBManager db) {
@@ -64,7 +64,7 @@ public class DBVocabulary {
             String word = rs.getString(1);
             int maxTf = rs.getInt(2);
             int nr = rs.getInt(3);
-            VocabularyEntry vEntry = new VocabularyEntry(maxTf, nr);
+            VocabularyEntry vEntry = new VocabularyEntry(word, maxTf, nr);
             vEntry.setDataBase(true);
             vocabulary.put(word, vEntry);
         }

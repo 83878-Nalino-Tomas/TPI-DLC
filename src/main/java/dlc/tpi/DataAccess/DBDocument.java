@@ -1,11 +1,10 @@
-package dlc.tpi.DataAccess;
+package dlc.tpi.dataAccess;
 
 import java.sql.ResultSet;
 import java.util.HashSet;
 
-
-import dlc.tpi.Entity.Document;
-import dlc.tpi.Utils.DBManager;
+import dlc.tpi.entity.Document;
+import dlc.tpi.util.DBManager;
 
 public class DBDocument {
 

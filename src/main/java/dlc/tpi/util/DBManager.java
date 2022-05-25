@@ -1,4 +1,4 @@
-package dlc.tpi.Utils;
+package dlc.tpi.util;
 
 import java.io.Serializable;
 import java.sql.CallableStatement;
@@ -16,7 +16,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-
 public class DBManager implements Serializable {
 
   private static final long serialVersionUID = -5234473242999323611L;
@@ -27,9 +26,9 @@ public class DBManager implements Serializable {
 
   public static final String MARIADB_DRIVER_NAME = "org.mariadb.jdbc.Driver";
   public static final String MYSQL_DRIVER_NAME = "org.mysql.jdbc.Driver";
+  public static final String POSTGRES_DRIVER_NAME = "org.postgresql.Driver";
 
   private DBConnectionMode connectionMode;
-
 
   private String driverName;
   private String url;

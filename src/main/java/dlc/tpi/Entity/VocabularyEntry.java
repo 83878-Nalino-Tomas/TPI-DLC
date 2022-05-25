@@ -1,16 +1,26 @@
-package dlc.tpi.Entity;
+package dlc.tpi.entity;
 
 public class VocabularyEntry {
+    private String word;
     private int maxTf;
     private int nr;
     private Boolean dataBase;
     private Boolean needUpdate;
 
-    public VocabularyEntry(int maxTf, int nr) {
+    public VocabularyEntry(String word, int maxTf, int nr) {
+        this.word = word;
         this.maxTf = maxTf;
         this.nr = nr;
         this.dataBase = false;
         this.needUpdate = false;
+    }
+
+    public String getWord() {
+        return this.word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
     }
 
     public void incrementNr() {

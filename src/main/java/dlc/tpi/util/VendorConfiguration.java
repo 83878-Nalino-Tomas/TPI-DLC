@@ -1,4 +1,4 @@
-package dlc.tpi.Utils;
+package dlc.tpi.util;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -8,9 +8,9 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import dlc.tpi.DataAccess.DBDocument;
-import dlc.tpi.DataAccess.DBVocabulary;
-import dlc.tpi.Entity.VocabularyEntry;
+import dlc.tpi.dataAccess.DBDocument;
+import dlc.tpi.dataAccess.DBVocabulary;
+import dlc.tpi.entity.VocabularyEntry;
 
 @Singleton
 @Startup
@@ -27,11 +27,11 @@ public class VendorConfiguration {
         docList = DBDocument.getDocuments(db);
     }
 
-    public Hashtable<String,VocabularyEntry> getVocabulary(){
+    public Hashtable<String, VocabularyEntry> getVocabulary() {
         return this.vocabulary;
     }
 
-    public HashSet<String> getDocList(){
+    public HashSet<String> getDocList() {
         return this.docList;
     }
 }

@@ -6,10 +6,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-
-import dlc.tpi.DataAccess.DBPost;
-import dlc.tpi.Entity.*;
-import dlc.tpi.Utils.DBManager;
+import dlc.tpi.dataAccess.DBPost;
+import dlc.tpi.entity.*;
+import dlc.tpi.util.DBManager;
 
 public class IndexService {
 
@@ -24,7 +23,7 @@ public class IndexService {
                     String word = words[i].replaceAll("[^a-zA-Z0-9]", "");
                     if (!word.isEmpty()) {
                         if (!vocabulary.containsKey(word)) {
-                            VocabularyEntry newEntry = new VocabularyEntry(1, 0);
+                            VocabularyEntry newEntry = new VocabularyEntry(word, 1, 0);
                             vocabulary.put(word, newEntry);
                         }
                         if (!docPost.containsKey(word)) {
