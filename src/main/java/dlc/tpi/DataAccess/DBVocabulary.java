@@ -11,22 +11,31 @@ import dlc.tpi.Utils.DBManager;
 public class DBVocabulary {
     public static void insertVocabulary(Hashtable<String, VocabularyEntry> vocabulary, DBManager db) {
         try {
-            int i = 0;
-
+            String SQL_UPDATE = "UPDATE dlc.vocabulary SET  maxTermFrecuency = ?, numRep = ? WHERE word = ?";
             String SQL_INSERT = "INSERT INTO dlc.vocabulary (word, maxTermFrecuency, numRep) VALUES(?,?,?)";
-            PreparedStatement st = db.getConnection().prepareStatement(SQL_INSERT);
+            PreparedStatement stUpdate = db.getConnection().prepareStatement(SQL_UPDATE);
+            PreparedStatement stInsert = db.getConnection().prepareStatement(SQL_INSERT);
 
             for (String w : vocabulary.keySet()) {
-                st.setString(1, w);
                 VocabularyEntry entry = vocabulary.get(w);
-                st.setInt(2, entry.getMaxTf());
-                st.setInt(3, entry.getNr());
-                st.addBatch();
-                i++;
-                if (i == vocabulary.size()) {
-                    st.executeBatch();
+                if (!entry.inDataBase()) {
+                    stInsert.setString(1, w);
+                    stInsert.setInt(2, entry.getMaxTf());
+                    stInsert.setInt(3, entry.getNr());
+                    stInsert.addBatch();
+                    entry.setDataBase(true);
+                } else if (entry.needUpdate()) {
+                    stUpdate.setInt(1, entry.getMaxTf());
+                    stUpdate.setInt(2, entry.getNr());
+                    stUpdate.setString(3, w);
+                    stUpdate.addBatch();
                 }
             }
+
+            stInsert.executeBatch();
+            stUpdate.executeBatch();
+            stInsert.close();
+            stUpdate.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,6 +65,7 @@ public class DBVocabulary {
             int maxTf = rs.getInt(2);
             int nr = rs.getInt(3);
             VocabularyEntry vEntry = new VocabularyEntry(maxTf, nr);
+            vEntry.setDataBase(true);
             vocabulary.put(word, vEntry);
         }
 

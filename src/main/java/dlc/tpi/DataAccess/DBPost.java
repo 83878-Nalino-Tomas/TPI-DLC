@@ -10,6 +10,7 @@ import dlc.tpi.Utils.DBManager;
 public class DBPost {
 
     public static void insertPost(HashMap<String, Post> post, DBManager db) {
+        String word = null;
         try {
             int i = 0;
 
@@ -17,6 +18,7 @@ public class DBPost {
             PreparedStatement st = db.getConnection().prepareStatement(SQL_INSERT);
 
             for (String w : post.keySet()) {
+                word = w;
                 st.setString(1, w);
                 Post actualPost = post.get(w);
                 st.setInt(2, actualPost.getDocId());
@@ -29,7 +31,7 @@ public class DBPost {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e + word);
         }
     }
 

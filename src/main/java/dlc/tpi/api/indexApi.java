@@ -11,6 +11,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import dlc.tpi.DataAccess.DBDocument;
 import dlc.tpi.DataAccess.DBVocabulary;
@@ -38,33 +39,35 @@ public class indexApi {
         } else {
             r = Response.ok("NoEntry").build();
         }
-
         return r;
     }
 
     @GET
     @Path("indexar")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response indexar() {
-        HashMap<String, Post> docPost = new HashMap<>();
-        String pathDocs = System.getProperty("user.home");
         Long init = System.currentTimeMillis();
-        IndexService is = new IndexService();
-        try (DirectoryStream<java.nio.file.Path> stream = Files
-                .newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {
+        String pathDocs = System.getProperty("user.home");
+
+        HashMap<String, Post> docPost = new HashMap<>();
+        HashSet<String> doclList = initConfig.getDocList();
+
+
+        try (DirectoryStream<java.nio.file.Path> stream = Files.newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {
             for (java.nio.file.Path file : stream) {
                 Document newDoc = new Document(file.getFileName().toString());
+                if(doclList.contains(newDoc.getDocName())) continue;
+                doclList.add(newDoc.getDocName());
                 DBDocument.insertDoc(newDoc, db);
-                is.indexOneByOne(newDoc, initConfig.getVocabulary(), docPost, db);
+                IndexService.indexOneByOne(newDoc, initConfig.getVocabulary(), docPost, db);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         DBVocabulary.insertVocabulary(initConfig.getVocabulary(), db);
         long res = (System.currentTimeMillis() - init) / 1000 / 60;
         String response = res + " Minutos";
-
-        Response r = Response.ok(response).build();
-        return r;
+        return Response.ok(response).build();
     }
 }

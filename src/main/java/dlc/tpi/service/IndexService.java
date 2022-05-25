@@ -6,13 +6,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+
 import dlc.tpi.DataAccess.DBPost;
 import dlc.tpi.Entity.*;
 import dlc.tpi.Utils.DBManager;
 
 public class IndexService {
 
-    public void indexOneByOne(Document doc, Hashtable<String, VocabularyEntry> vocabulary,
+    public static void indexOneByOne(Document doc, Hashtable<String, VocabularyEntry> vocabulary,
             HashMap<String, Post> docPost, DBManager db) {
         String delim = "[\\.\\n\\s*,;]+";
         try (BufferedReader buffer = new BufferedReader(new FileReader(doc.getPath()))) {
@@ -27,8 +28,10 @@ public class IndexService {
                             vocabulary.put(word, newEntry);
                         }
                         if (!docPost.containsKey(word)) {
-                            vocabulary.get(word).incrementNr();
-                            Post newPost = new Post(1, doc.getDocId(), getContext(newLine));
+                            VocabularyEntry entry = vocabulary.get(word);
+                            entry.incrementNr();
+                            entry.setNeedUpdate(true);
+                            Post newPost = new Post(1, doc.getDocId(), getNormalizeContext(newLine));
                             docPost.put(word, newPost);
                         } else {
                             docPost.get(word).IncrementTF();
@@ -37,6 +40,7 @@ public class IndexService {
                         VocabularyEntry wordVocabularyEntry = vocabulary.get(word);
                         int docTf = docPost.get(word).getTermfrecuency();
                         if (docTf > wordVocabularyEntry.getMaxTf()) {
+                            wordVocabularyEntry.setNeedUpdate(true);
                             wordVocabularyEntry.setMaxTf(docTf);
                         }
                     }
@@ -50,10 +54,12 @@ public class IndexService {
         }
     }
 
-    public String getContext(String line) {
+    public static String getNormalizeContext(String line) {
         if (line.length() > 140) {
             return line.substring(0, 140);
         }
         return line;
     }
+
+
 }
