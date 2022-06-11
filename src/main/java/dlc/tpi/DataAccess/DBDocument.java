@@ -1,7 +1,9 @@
 package dlc.tpi.dataAccess;
 
 import java.sql.ResultSet;
-import java.util.HashSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import dlc.tpi.entity.Document;
 import dlc.tpi.util.DBManager;
@@ -24,20 +26,27 @@ public class DBDocument {
         }
     }
 
-    public static HashSet<String> getDocuments(DBManager db){
-        HashSet<String> documents = new HashSet<>();
+    public static List<Document> getDocuments(DBManager db) {
+        ArrayList<Document> documents = new ArrayList<Document>();
         try {
-            String SQL_QUERY = "SELECT docName FROM document";
+            String SQL_QUERY = "SELECT * FROM document";
             db.prepareQuery(SQL_QUERY);
             ResultSet rs = db.executeQuery();
-            while(rs.next()) {
-                documents.add(rs.getString(1));
+            while (rs.next()) {
+                Document d = buildDocument(rs);
+                documents.add(d);
             }
             rs.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return documents;
+    }
+
+    private static Document buildDocument(ResultSet rs) throws SQLException {
+        int docId = rs.getInt("docId");
+        String docName = rs.getString("docName");
+        return new Document(docId, docName);
     }
 
 }

@@ -5,12 +5,58 @@ import java.util.Hashtable;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.List;
 
+import dlc.tpi.dataAccess.DBDocument;
+import dlc.tpi.dataAccess.DBIndex;
 import dlc.tpi.dataAccess.DBPost;
+import dlc.tpi.dataAccess.DBVocabulary;
 import dlc.tpi.entity.*;
 import dlc.tpi.util.DBManager;
 
 public class IndexService {
+
+    public static Index indexar(List<Document> docList, Hashtable<String, VocabularyEntry> vocabulary, DBManager db) {
+        Index index = new Index();
+        Long[] results = new Long[3];
+        String pathDocs = System.getProperty("user.home");
+        HashMap<String, Post> docPost = new HashMap<>();
+        long doclListStartSize = docList.size();
+        indexDocuments(pathDocs, db, docList, docPost, vocabulary);
+        long docListEndSize = docList.size();
+        long cantDocIndexados = docListEndSize - doclListStartSize;
+        results[0] = cantDocIndexados;
+        long[] wordsCount = DBVocabulary.insertVocabulary(vocabulary, db);
+        index.finish();
+        results[1] = wordsCount[0];
+        results[2] = wordsCount[1];
+        index.setData(results);
+        if (cantDocIndexados > 0) {
+            DBIndex.saveIndex(index, db);
+        }
+        return index;
+    }
+
+    public static void indexDocuments(String pathDocs, DBManager db, List<Document> doclList,
+            HashMap<String, Post> docPost, Hashtable<String, VocabularyEntry> vocabulary) {
+        try (DirectoryStream<Path> stream = Files
+                .newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {
+            for (java.nio.file.Path file : stream) {
+                Document newDoc = new Document(file.getFileName().toString());
+                if (doclList.contains(newDoc))
+                    continue;
+                doclList.add(newDoc);
+                DBDocument.insertDoc(newDoc, db);
+                indexOneByOne(newDoc, vocabulary, docPost, db);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void indexOneByOne(Document doc, Hashtable<String, VocabularyEntry> vocabulary,
             HashMap<String, Post> docPost, DBManager db) {
@@ -60,5 +106,8 @@ public class IndexService {
         return line;
     }
 
+    public static List<Index> getIndexHistory(DBManager db) {
+        return DBIndex.getAllIndex(db);
+    }
 
 }

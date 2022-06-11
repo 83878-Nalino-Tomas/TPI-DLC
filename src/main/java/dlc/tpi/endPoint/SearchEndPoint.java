@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import dlc.tpi.util.DBManager;
 import dlc.tpi.util.VendorConfiguration;
+import dlc.tpi.entity.Document;
 import dlc.tpi.entity.VocabularyEntry;
 
 @Path("search")

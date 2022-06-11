@@ -1,7 +1,7 @@
 package dlc.tpi.util;
 
-import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import dlc.tpi.dataAccess.DBDocument;
 import dlc.tpi.dataAccess.DBVocabulary;
+import dlc.tpi.entity.Document;
 import dlc.tpi.entity.VocabularyEntry;
 
 @Singleton
@@ -19,7 +20,7 @@ public class VendorConfiguration {
     @Inject
     private DBManager db;
     private Hashtable<String, VocabularyEntry> vocabulary;
-    private HashSet<String> docList;
+    private List<Document> docList;
 
     @PostConstruct
     public void loadConfiguration() {
@@ -31,7 +32,11 @@ public class VendorConfiguration {
         return this.vocabulary;
     }
 
-    public HashSet<String> getDocList() {
+    public List<Document> getDocList() {
         return this.docList;
+    }
+
+    public void setDocList(List<Document> docList) {
+        this.docList = docList;
     }
 }

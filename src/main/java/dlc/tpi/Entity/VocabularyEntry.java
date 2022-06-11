@@ -1,6 +1,6 @@
 package dlc.tpi.entity;
 
-public class VocabularyEntry {
+public class VocabularyEntry implements Comparable<VocabularyEntry> {
     private String word;
     private int maxTf;
     private int nr;
@@ -55,6 +55,18 @@ public class VocabularyEntry {
         this.needUpdate = needUpdate;
     }
 
+    public float getIdf(int n) {
+        return (float) Math.log10((float) n / (float) this.nr);
+    }
+
+    public boolean isStopWord(int n) {
+        int porcentaje = (this.nr * 100) / n;
+        if(porcentaje >= 35) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -62,4 +74,18 @@ public class VocabularyEntry {
         sb.append("\nNr: ").append(this.nr);
         return sb.toString();
     }
+
+    @Override
+    public int compareTo(VocabularyEntry o) {
+        VocabularyEntry v = (VocabularyEntry) o;
+
+        if (this.nr > v.getNr()) {
+            return -1;
+        } else if (this.nr < v.getNr()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
 }

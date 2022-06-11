@@ -9,7 +9,10 @@ import dlc.tpi.entity.VocabularyEntry;
 import dlc.tpi.util.DBManager;
 
 public class DBVocabulary {
-    public static void insertVocabulary(Hashtable<String, VocabularyEntry> vocabulary, DBManager db) {
+    public static long[] insertVocabulary(Hashtable<String, VocabularyEntry> vocabulary, DBManager db) {
+        long[] results = new long[2];
+        long updated = 0;
+        long inserted = 0;
         try {
             String SQL_UPDATE = "UPDATE dlc.vocabulary SET  maxTermFrecuency = ?, numRep = ? WHERE word = ?";
             String SQL_INSERT = "INSERT INTO dlc.vocabulary (word, maxTermFrecuency, numRep) VALUES(?,?,?)";
@@ -24,11 +27,13 @@ public class DBVocabulary {
                     stInsert.setInt(3, entry.getNr());
                     stInsert.addBatch();
                     entry.setDataBase(true);
+                    inserted++;
                 } else if (entry.needUpdate()) {
                     stUpdate.setInt(1, entry.getMaxTf());
                     stUpdate.setInt(2, entry.getNr());
                     stUpdate.setString(3, w);
                     stUpdate.addBatch();
+                    updated++;
                 }
             }
 
@@ -39,7 +44,9 @@ public class DBVocabulary {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        results[0] = inserted;
+        results[1] = updated;
+        return results;
     }
 
     public static Hashtable<String, VocabularyEntry> loadVocabulary(DBManager db) {
