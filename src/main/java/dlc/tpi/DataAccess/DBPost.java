@@ -55,6 +55,6 @@ public class DBPost {
         int docId = rs.getInt("docId");
         int termFrecuency = rs.getInt("termFrecuency");
         String context = rs.getString("ctx");
-        return new Post(docId, termFrecuency, context);
+        return new Post(termFrecuency, docId, context);
     }
 }

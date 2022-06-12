@@ -55,4 +55,7 @@ public class Post {
         return this.context;
     }
 
+    public float getRelevance(float idf) {
+        return this.termfrecuency * idf;
+    }
 }

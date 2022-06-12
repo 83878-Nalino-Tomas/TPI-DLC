@@ -1,6 +1,5 @@
 package dlc.tpi;
 
-
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeSet;
@@ -9,6 +8,7 @@ import dlc.tpi.dataAccess.DBDocument;
 import dlc.tpi.dataAccess.DBVocabulary;
 import dlc.tpi.entity.Document;
 import dlc.tpi.entity.VocabularyEntry;
+import dlc.tpi.service.SearchService;
 import dlc.tpi.util.DBManager;
 
 public class main {
@@ -26,10 +26,12 @@ public class main {
         // String query = "Quixote, QUIJOTE, SANCHO";
 
         List<Document> docList = DBDocument.getDocuments(db);
+        System.out.println(docList.size());
         // SearchService.search(query, vocabulary, docmuents, db);
         //
 
-        Hashtable <String, VocabularyEntry> vocabulary = DBVocabulary.loadVocabulary(db);
+        Hashtable<String, VocabularyEntry> vocabulary = DBVocabulary.loadVocabulary(db);
+        System.out.println(vocabulary.get("the").getIdf(595));
         String query = "Quixote, QUIJOTE, SANCHO";
         String delim = "[\\.\\n\\s*,;]+";
         String[] terms = query.split(delim);
@@ -42,16 +44,13 @@ public class main {
             }
         }
 
-
-
-
-        // TreeSet<SearchEntry> ld = SearchService.search(query, vocabulary, docList, db);
-        // // for (SearchEntry se : ld.descendingSet()) {
-        // //     System.out.println(se);
-        // // }
-
+        List<Document> ld = SearchService.search(query, vocabulary, db, docList);
+        for (Document se : ld) {
+        System.out.println(se);
+        }
+        System.out.println(ld.size());
         // System.out.println(ld.size());
-      //  System.out.println(ld.size());
+        // System.out.println(ld.size());
         // String pathDocs = System.getProperty("user.home");
         // try (DirectoryStream<java.nio.file.Path> stream = Files
         // .newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {

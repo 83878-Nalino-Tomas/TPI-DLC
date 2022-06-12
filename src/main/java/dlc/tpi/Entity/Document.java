@@ -1,21 +1,24 @@
 package dlc.tpi.entity;
 
-public class Document {
+public class Document implements Comparable<Document> {
     private Integer docId;
     private String docName;
     private String path;
     private final String dir = "DocumentosTP1";
-    private int indiceRelevancia;
+    private Float indiceRelevancia;
+    private String contextWords;
 
     public Document(String docName) {
         this.docName = docName;
         this.path = this.generatePath(docName);
+        this.setIr();
     }
 
     public Document(Integer docId, String docName) {
         this.docId = docId;
         this.docName = docName;
         this.path = this.generatePath(docName);
+        this.setIr();
     }
 
     public void setDocId(Integer docId) {
@@ -35,15 +38,27 @@ public class Document {
     }
 
     public void setIr() {
-        this.indiceRelevancia = 0;
+        this.indiceRelevancia = 0f;
     }
 
-    public void incrementIr(int ir) {
-        this.indiceRelevancia += ir;
+    public void incrementIr(float increment) {
+        this.indiceRelevancia += (this.indiceRelevancia == null) ? increment : increment * 1.25f;
     }
 
-    public int getIr() {
+    public void appendContext(String context, String word) {
+        if (this.contextWords == null) {
+            this.contextWords = "\n Word: " + word + "\n Context: " + context;
+        } else {
+            this.contextWords += "\n Word: " + word + "\n Context: " + context;
+        }
+    }
+
+    public Float getIr() {
         return this.indiceRelevancia;
+    }
+
+    public String getContextWords() {
+        return this.contextWords;
     }
 
     public String generatePath(String fileName) {
@@ -78,4 +93,32 @@ public class Document {
         return hashCode;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Documento: ").append(this.docName).append("\t");
+        sb.append("Peso: ").append(this.indiceRelevancia);
+        sb.append("\n Contextos: ").append(this.contextWords);
+        return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Document o) {
+        Document document = (Document) o;
+
+        if (this.indiceRelevancia > document.getIr()) {
+            return 1;
+        } else if (this.indiceRelevancia < document.getIr()) {
+            return -1;
+        } else {
+            return 0;
+        }
+
+    }
+
+    @Override
+    public Document clone() {
+        Document clone = new Document(this.docId, this.docName);
+        return clone;
+    }
 }

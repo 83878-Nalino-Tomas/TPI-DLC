@@ -19,7 +19,6 @@ public class DBManagerProducer {
             db.setUrl("jdbc:mariadb://localhost:3306/dlc?rewriteBatchedStatements=true");
             db.setUserName("root");
             db.setPassword("dlc2022");
-
             db.connect();
         } catch (Exception e) {
             e.printStackTrace();
