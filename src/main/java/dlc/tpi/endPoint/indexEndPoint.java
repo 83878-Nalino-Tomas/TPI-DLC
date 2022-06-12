@@ -21,7 +21,7 @@ public class indexEndPoint {
     @Inject
     private DBManager db;
 
-    @GET
+    @POST
     @Path("indexar")
     @Produces(MediaType.APPLICATION_JSON)
     public Response indexar() {
@@ -36,4 +36,6 @@ public class indexEndPoint {
         List<Index> indexLog = IndexService.getIndexHistory(db);
         return Response.ok(indexLog).build();
     }
+
+    
 }

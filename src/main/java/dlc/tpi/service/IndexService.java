@@ -75,7 +75,9 @@ public class IndexService {
                         if (!docPost.containsKey(word)) {
                             VocabularyEntry entry = vocabulary.get(word);
                             entry.incrementNr();
-                            entry.setNeedUpdate(true);
+                            if (entry.inDataBase()) {
+                                entry.setNeedUpdate(true);
+                            }
                             Post newPost = new Post(1, doc.getDocId(), getNormalizeContext(newLine));
                             docPost.put(word, newPost);
                         } else {

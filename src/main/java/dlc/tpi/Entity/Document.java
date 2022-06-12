@@ -1,5 +1,9 @@
 package dlc.tpi.entity;
 
+import java.io.File;
+
+import javax.persistence.Transient;
+
 public class Document implements Comparable<Document> {
     private Integer docId;
     private String docName;
@@ -120,5 +124,14 @@ public class Document implements Comparable<Document> {
     public Document clone() {
         Document clone = new Document(this.docId, this.docName);
         return clone;
+    }
+
+    @Transient
+    public File obtenerFile() {
+        try {
+            return new File(this.path);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

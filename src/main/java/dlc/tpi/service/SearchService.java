@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.File;
 
 public class SearchService {
 
@@ -63,6 +64,10 @@ public class SearchService {
                 posting.put(term, termPost);
             }
         }
+    }
+
+    public static File getFile(List<Document> docList, int id) {
+        return docList.get(id + 1).obtenerFile();
     }
 
 }

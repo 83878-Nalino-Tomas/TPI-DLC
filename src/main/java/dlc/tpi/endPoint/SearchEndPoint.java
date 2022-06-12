@@ -6,6 +6,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.File;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -46,6 +47,23 @@ public class SearchEndPoint {
         Hashtable<String, VocabularyEntry> vocabulary = initConfig.getVocabulary();
         List<Document> result = SearchService.search(query, vocabulary, db, docList);
         r = Response.ok(result).build();
+        return r;
+    }
+
+    @GET
+    @Path("download/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getDownload(@PathParam("id") int id) {
+        Response r;
+        List<Document> docList = initConfig.getDocList();
+
+        File arch = SearchService.getFile(docList, id);
+
+        if (arch == null) {
+            r = Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            r = Response.ok(arch).build();
+        }
         return r;
     }
 
