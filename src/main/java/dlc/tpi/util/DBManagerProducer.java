@@ -16,7 +16,7 @@ public class DBManagerProducer {
             db = new DBManager();
             db.setConnectionMode(DBManager.DBConnectionMode.SINGLE_CONNECTION_MODE);
             db.setDriverName(DBManager.MARIADB_DRIVER_NAME);
-            db.setUrl("jdbc:mariadb://localhost:3306/dlc?rewriteBatchedStatements=true");
+            db.setUrl("jdbc:mariadb://localhost:3636/dlc?rewriteBatchedStatements=true");
             db.setUserName("root");
             db.setPassword("dlc2022");
             db.connect();
