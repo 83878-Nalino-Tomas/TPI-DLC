@@ -47,11 +47,12 @@ public class IndexService {
                 .newDirectoryStream(Paths.get(pathDocs + "\\DocumentosTP1"))) {
             for (java.nio.file.Path file : stream) {
                 Document newDoc = new Document(file.getFileName().toString());
-                if (doclList.contains(newDoc))
-                    continue;
-                doclList.add(newDoc);
-                DBDocument.insertDoc(newDoc, db);
-                indexOneByOne(newDoc, vocabulary, docPost, db);
+                if (!doclList.contains(newDoc)) {
+                    doclList.add(newDoc);
+                    DBDocument.insertDoc(newDoc, db);
+                    indexOneByOne(newDoc, vocabulary, docPost, db);
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +88,9 @@ public class IndexService {
                         VocabularyEntry wordVocabularyEntry = vocabulary.get(word);
                         int docTf = docPost.get(word).getTermfrecuency();
                         if (docTf > wordVocabularyEntry.getMaxTf()) {
-                            wordVocabularyEntry.setNeedUpdate(true);
+                            if(wordVocabularyEntry.inDataBase()) {
+                                wordVocabularyEntry.setNeedUpdate(true);
+                            }
                             wordVocabularyEntry.setMaxTf(docTf);
                         }
                     }
