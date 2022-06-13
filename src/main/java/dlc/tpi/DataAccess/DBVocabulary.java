@@ -33,6 +33,7 @@ public class DBVocabulary {
                     stUpdate.setInt(2, entry.getNr());
                     stUpdate.setString(3, w);
                     stUpdate.addBatch();
+                    entry.setNeedUpdate(false);
                     updated++;
                 }
             }
