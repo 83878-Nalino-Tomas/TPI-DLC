@@ -67,7 +67,7 @@ public class SearchService {
     }
 
     public static File getFile(List<Document> docList, int id) {
-        return docList.get(id + 1).obtenerFile();
+        return docList.get(id - 1).obtenerFile();
     }
 
 }
