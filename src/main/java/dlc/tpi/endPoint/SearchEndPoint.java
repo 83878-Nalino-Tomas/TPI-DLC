@@ -42,6 +42,7 @@ public class SearchEndPoint {
     @Path("{query}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSearch(@PathParam("query") String query) {
+        
         Response r;
         List<Document> docList = initConfig.getDocList();
         Hashtable<String, VocabularyEntry> vocabulary = initConfig.getVocabulary();
